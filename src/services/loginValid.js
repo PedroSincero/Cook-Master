@@ -1,5 +1,5 @@
 const Joi = require('joi');
-const { findByEmail, findByPassword } = require('../models/loginModel');
+const { findEmailPassword } = require('../models/loginModel');
 
 const validBodyLogin = (email, password) => {
   const { error } = Joi.object({
@@ -9,24 +9,21 @@ const validBodyLogin = (email, password) => {
   return error;
 };
 
-const emailIsExist = async (email) => {
-  const result = await findByEmail(email);
+const loginIsExist = async (email, password) => {
+  const isBodyValid = validBodyLogin(email, password);
+  if (isBodyValid) {
+    return 'ok';
+  }
+  // const isemail = await findByEmail(email);
+  // const ispassword = await findByPassword(password);
+  const result = await findEmailPassword(email, password);
   if (!result) {
     return false;
   }
-  return true;
-};
-
-const passwordIsExist = async (email) => {
-  const result = await findByPassword(email);
-  if (!result) {
-    return false;
-  }
-  return true;
+  return result;
 };
 
 module.exports = {
   validBodyLogin,
-  emailIsExist,
-  passwordIsExist,
+  loginIsExist,
 };

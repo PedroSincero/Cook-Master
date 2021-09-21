@@ -1,24 +1,25 @@
 // const userModel = require('../models/userModel');
-const { validBodyLogin, emailIsExist, passwordIsExist } = require('../services/loginValid');
+
+const { jwtLogin } = require('../api/auth/tokenJWT');
+const { loginIsExist } = require('../services/loginValid');
 
 const login = async (req, res) => {
   const { email, password } = req.body;
-  console.log('controller', email, password);
-  const isValidBody = validBodyLogin(email, password);
-  const isValidEmail = await emailIsExist(email);
-  const isValidPassword = await passwordIsExist(password);
-  if (isValidBody) {
-    console.log('is valid ? ', isValidBody);
+  const isLogin = await loginIsExist(email, password);
+  if (isLogin === 'ok') {
     return res.status(401).json({
       message: 'All fields must be filled',
     });
   }
-  if (!isValidEmail || !isValidPassword) {
+  if (!isLogin) {
     return res.status(401).json({
       message: 'Incorrect username or password',
     });
   }
-  return res.status(200).json('funcionar funciona');
+  const { _id, role } = isLogin;
+  const payload = { _id, role };
+  const token = jwtLogin(payload);
+  return res.status(200).json(token);
 };
 
 module.exports = { 
