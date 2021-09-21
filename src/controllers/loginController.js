@@ -17,8 +17,9 @@ const login = async (req, res) => {
     });
   }
   const { _id, role } = isLogin;
-  const payload = { _id, role };
+  const payload = { _id, email, role };
   const token = jwtLogin(payload);
+  console.log(token);
   return res.status(200).json(token);
 };
 
