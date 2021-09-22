@@ -1,6 +1,8 @@
 const Joi = require('joi');
 const jwt = require('jsonwebtoken');
+const { ObjectId } = require('mongodb');
 const userModel = require('../models/userModel');
+const recipesModel = require('../models/recipesModel');
 
 const secret = 'teste';
 const validBody = (name, ingredients, preparation) => {
@@ -26,9 +28,17 @@ const validJWT = async (token) => {
   }
 };
 
+const validId = async (id) => {
+  if (!ObjectId.isValid(id)) return false;
+  const findID = await recipesModel.findOne(id);
+  if (!findID) return false;
+  return findID;
+};
+
 module.exports = {
   validBody,
   validJWT,
+  validId,
 };
 
 // Agradecimentos a Gabriel essenio Turma 10 Tribo B - pelo auxilio no validJwT

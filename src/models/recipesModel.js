@@ -1,4 +1,4 @@
-// const { ObjectId } = require('mongodb');
+const { ObjectId } = require('mongodb');
 const connection = require('./connections');
 
 const serialize = (db) => {
@@ -27,7 +27,15 @@ const findAll = async () => {
   return getAll;
 };
 
+const findOne = async (id) => {
+  const db = await connection();
+  const getOne = await db.collection('recipes').findOne(ObjectId(id));
+  console.log('Model:', getOne);
+  return getOne;
+};
+
 module.exports = {
   add,
   findAll,
+  findOne,
 };

@@ -1,5 +1,5 @@
 const recipesModel = require('../models/recipesModel');
-const { validBody, validJWT } = require('../services/recipesValid');
+const { validBody, validJWT, validId } = require('../services/recipesValid');
 
 const add = async (req, res) => {
   const { name, ingredients, preparation } = req.body;
@@ -25,7 +25,15 @@ const findAll = async (req, res) => {
   return res.status(200).json(result);
 };
 
+const findOne = async (req, res) => {
+  const { id } = req.params;
+  const getOne = await validId(id);
+  if (!getOne) return res.status(404).json({ message: 'recipe not found' });
+  return res.status(200).json(getOne);
+};
+
 module.exports = { 
   add,
   findAll,
+  findOne,
 };
