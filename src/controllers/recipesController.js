@@ -1,5 +1,6 @@
 const recipesModel = require('../models/recipesModel');
-const { validBody, validJWT, validId, valiEdit } = require('../services/recipesValid');
+const { validBody, 
+  validJWT, validId, valiEdit, validExclude } = require('../services/recipesValid');
 
 const add = async (req, res) => {
   const { name, ingredients, preparation } = req.body;
@@ -48,8 +49,21 @@ const edit = async (req, res) => {
     });
   }
   const result = await valiEdit(id, name, ingredients, preparation);
-  console.log('controller: ', result);
   return res.status(200).json(result);
+};
+
+const exclude = async (req, res) => {
+  const { id } = req.params;
+  const token = req.headers.authorization;
+
+  const isValidToken = await validJWT(token);
+  if (!isValidToken) {
+    return res.status(401).json({
+      message: 'missing auth token',
+    });
+  }
+  await validExclude(id);
+  return res.status(204).json();
 };
 
 module.exports = { 
@@ -57,4 +71,5 @@ module.exports = {
   findAll,
   findOne,
   edit,
+  exclude,
 };

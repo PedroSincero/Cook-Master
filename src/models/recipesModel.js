@@ -39,8 +39,14 @@ const edit = async (id, name, ingredients, preparation) => {
   .findOneAndUpdate({ _id: ObjectId(id) },
   { $set: { name, ingredients, preparation } }, { returnOriginal: false });
 
-  // console.log('model', update.value);
   return update.value;
+};
+
+const exclude = async (id) => {
+  const db = await connection();
+  // const recipeID = await findOne(id);
+  const result = await db.collection('recipes').deleteOne({ _id: ObjectId(id) });
+  return result;
 };
 
 module.exports = {
@@ -48,6 +54,7 @@ module.exports = {
   findAll,
   findOne,
   edit,
+  exclude,
 };
 
 // Agradecimentos a Leandro Reis Turma 10 - Tribo B - Pelo auxilio no update

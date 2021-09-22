@@ -42,11 +42,19 @@ const valiEdit = async (id, name, ingredients, preparation) => {
   return update;
 };
 
+const validExclude = async (id) => {
+  if (!ObjectId.isValid(id)) return false;
+  const excludeID = await recipesModel.exclude(id);
+  if (!excludeID) return false;
+  return excludeID;
+};
+
 module.exports = {
   validBody,
   validJWT,
   validId,
   valiEdit,
+  validExclude,
 };
 
 // Agradecimentos a Gabriel essenio Turma 10 Tribo B - pelo auxilio no validJwT
