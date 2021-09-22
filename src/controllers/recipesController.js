@@ -21,7 +21,6 @@ const add = async (req, res) => {
 
 const findAll = async (req, res) => {
   const result = await recipesModel.findAll();
-  console.log(result);
   return res.status(200).json(result);
 };
 

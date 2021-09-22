@@ -30,7 +30,6 @@ const findAll = async () => {
 const findOne = async (id) => {
   const db = await connection();
   const getOne = await db.collection('recipes').findOne(ObjectId(id));
-  console.log('Model:', getOne);
   return getOne;
 };
 
