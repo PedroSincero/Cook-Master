@@ -24,7 +24,7 @@ const validJWT = async (token) => {
 
    return user;
   } catch (err) {
-    return false;
+    return 'ok';
   }
 };
 
@@ -35,10 +35,18 @@ const validId = async (id) => {
   return findID;
 };
 
+const valiEdit = async (id, name, ingredients, preparation) => {
+  if (!ObjectId.isValid(id)) return false;
+  const update = await recipesModel.edit(id, name, ingredients, preparation);
+  if (!update) return false;
+  return update;
+};
+
 module.exports = {
   validBody,
   validJWT,
   validId,
+  valiEdit,
 };
 
 // Agradecimentos a Gabriel essenio Turma 10 Tribo B - pelo auxilio no validJwT

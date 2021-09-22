@@ -33,8 +33,21 @@ const findOne = async (id) => {
   return getOne;
 };
 
+const edit = async (id, name, ingredients, preparation) => {
+  const db = await connection();
+  const update = await db.collection('recipes')
+  .findOneAndUpdate({ _id: ObjectId(id) },
+  { $set: { name, ingredients, preparation } }, { returnOriginal: false });
+
+  // console.log('model', update.value);
+  return update.value;
+};
+
 module.exports = {
   add,
   findAll,
   findOne,
+  edit,
 };
+
+// Agradecimentos a Leandro Reis Turma 10 - Tribo B - Pelo auxilio no update

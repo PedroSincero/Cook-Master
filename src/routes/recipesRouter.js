@@ -9,4 +9,6 @@ router.get('/', recipesController.findAll);
 
 router.post('/', recipesController.add);
 
+router.put('/:id', recipesController.edit);
+
 module.exports = router;
