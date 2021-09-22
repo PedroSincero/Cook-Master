@@ -21,6 +21,13 @@ const add = async (name, ingredients, preparation, userId) => {
   return result.map(serialize);
 };
 
+const findAll = async () => {
+  const db = await connection();
+  const getAll = await db.collection('recipes').find().toArray();
+  return getAll;
+};
+
 module.exports = {
   add,
+  findAll,
 };
