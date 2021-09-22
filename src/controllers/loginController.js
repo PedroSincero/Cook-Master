@@ -1,5 +1,3 @@
-// const userModel = require('../models/userModel');
-
 const { jwtLogin } = require('../api/auth/tokenJWT');
 const { loginIsExist } = require('../services/loginValid');
 
@@ -19,8 +17,7 @@ const login = async (req, res) => {
   const { _id, role } = isLogin;
   const payload = { _id, email, role };
   const token = jwtLogin(payload);
-  console.log(token);
-  return res.status(200).json(token);
+  return res.status(200).json({ token });
 };
 
 module.exports = { 
