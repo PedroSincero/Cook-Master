@@ -49,12 +49,22 @@ const exclude = async (id) => {
   return result;
 };
 
+const editImage = async (id, image) => {
+  const db = await connection();
+  const update = await db.collection('recipes')
+  .findOneAndUpdate({ _id: ObjectId(id) },
+  { $set: { image } }, { returnOriginal: false });
+
+  return update.value;
+};
+
 module.exports = {
   add,
   findAll,
   findOne,
   edit,
   exclude,
+  editImage,
 };
 
 // Agradecimentos a Leandro Reis Turma 10 - Tribo B - Pelo auxilio no update

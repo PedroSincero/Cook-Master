@@ -20,7 +20,7 @@ const add = async (req, res) => {
   return res.status(201).json({ recipe });
 };
 
-const findAll = async (req, res) => {
+const findAll = async (_req, res) => {
   const result = await recipesModel.findAll();
   return res.status(200).json(result);
 };
@@ -66,10 +66,18 @@ const exclude = async (req, res) => {
   return res.status(204).json();
 };
 
+const addImage = async (req, res) => {
+  const { id } = req.params;
+  const image = `localhost:3000/${req.file.path}`;
+  const result = await recipesModel.editImage(id, image);
+  res.status(200).json(result);
+};
+
 module.exports = { 
   add,
   findAll,
   findOne,
   edit,
   exclude,
+  addImage,
 };
