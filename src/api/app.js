@@ -4,6 +4,8 @@ const { userRouter, loginRouter, recipesRouter } = require('../routes/index');
 const app = express();
 
 app.use(express.json());
+
+app.use('/images', express.static('src/uploads'));
 // Não remover esse end-point, ele é necessário para o avaliador
 app.get('/', (request, response) => {
   response.send();
