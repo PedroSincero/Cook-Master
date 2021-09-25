@@ -1,5 +1,5 @@
 const userModel = require('../models/userModel');
-const { validBody, emailIsUnique } = require('../services/userValid');
+const { validBody, emailIsUnique, validAdmin } = require('../services/userValid');
 
 const add = async (req, res) => {
   const { name, email, password } = req.body;
@@ -18,12 +18,24 @@ const add = async (req, res) => {
     });
   }
 
-  const [user] = await userModel.add(name, email, password);
+  const [user] = await userModel.add(name, email, password, 'user');
+  return res.status(201).json({ user });
+};
+
+const newAdmin = async (req, res) => {
+  const token = req.headers.authorization;
+  const { name, email, password } = req.body;
+  const isValidToken = await validAdmin(token);
+  if (!isValidToken) {
+     return res.status(403).json({ message: 'Only admins can register new admins' });
+  }
+  const [user] = await userModel.add(name, email, password, 'admin');
   return res.status(201).json({ user });
 };
 
 module.exports = { 
   add,
+  newAdmin,
 };
 
 // Agradecimentos a Lucas Martigns Turma 10 - Tribo B Por ter me auxiliado no Requisito 1

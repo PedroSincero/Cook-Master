@@ -1,5 +1,8 @@
 const Joi = require('joi');
+const jwt = require('jsonwebtoken');
 const { findByEmail } = require('../models/userModel');
+// const { validJWT } = require('../services/recipesValid');
+const secret = 'teste';
 
 const validBody = (name, email, password) => {
   const { error } = Joi.object({
@@ -18,7 +21,20 @@ const emailIsUnique = async (email) => {
   return true;
 };
 
+const validAdmin = async (token) => {
+  try {
+    const decoded = jwt.verify(token, secret);
+    const admin = await findByEmail(decoded.email);
+    if (admin.role !== 'admin') return false;
+
+    return admin;
+  } catch (err) {
+    return false;
+  }
+};
+
 module.exports = {
   validBody,
   emailIsUnique,
+  validAdmin,
 };

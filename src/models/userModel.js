@@ -11,9 +11,9 @@ const serialize = (db) => {
   };
 };
 
-const add = async (name, email, password) => {
+const add = async (name, email, password, role) => {
   const db = await connection();
-  const addUser = await db.collection('users').insertOne({ name, email, password, role: 'user' });
+  const addUser = await db.collection('users').insertOne({ name, email, password, role });
   const result = addUser.ops;
   return result.map(serialize);
 };
