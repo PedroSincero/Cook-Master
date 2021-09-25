@@ -82,4 +82,45 @@ describe('1 - POST /users/', () => {
       expect(response.body.message).to.be.equal('Email already registered');
     });
   });
+  
+  describe('1.3 - Sucesso Registro', () => {
+    const DBServer = new MongoMemoryServer();
+    let response;
+
+    before(async() => {
+      const URLMock = await DBServer.getUri();
+      const connectionMock = await MongoClient.connect(URLMock,
+        { useNewUrlParser: true, useUnifiedTopology: true });
+      sinon.stub(MongoClient, 'connect').resolves(connectionMock);
+
+      response = await chai.request(server).post('/users/').send(usuárioValido);
+    });
+
+    after(async () => {
+      MongoClient.connect.restore();
+      await DBServer.stop();
+    });
+
+    it('retorna status 201', () => {
+      expect(response).to.have.status(201);
+    });
+
+    it('retorna um objeto', () => {
+      expect(response.body).to.be.an('object');
+    });
+
+    it('contem a propriedade user', () => {
+      expect(response.body).to.have.a.property('user');
+    });
+
+    it(' o user deve conter as seguintes propriedades, name, email, role, e id', () => {
+      expect(response.body.user).to.have.a.property('_id');
+      expect(response.body.user).to.have.a.property('role').equal('user');
+      expect(response.body.user).to.have.a.property('name').equal(usuárioValido.name);
+      expect(response.body.user).to.have.a.property('email').equal(usuárioValido.email);
+    });
+  });
+
 });
+
+// Agradecimentos a Leandro Reis Turma 10 - Tribo B pelo auxilio na construção dos Testes User
