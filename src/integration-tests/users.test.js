@@ -4,6 +4,7 @@ const server = require('../api/app')
 const sinon = require('sinon');
 const { MongoClient } = require('mongodb');
 const { MongoMemoryServer } = require('mongodb-memory-server');
+const { mockDBMemory } = require('./util');
 
 chai.use(chaiHttp);
 
@@ -21,41 +22,39 @@ const usuárioInvalido = {
   password: '123456789'
 }
 
-describe('1 - POST /users/', () => {
+describe('1 - Validating endpoint "POST" from path "/users/"', () => {
   
-  describe('1.1 - validando entradas', () => {
+  describe('1.1 - Validating body error messages', () => {
     let response;
 
     before(async () => {
       response = await chai.request(server).post('/users/').send({});
     });
 
-    it('retorna o código de status 400', () => {
+    it('Will be checked if it returns a 400 status code.', () => {
       expect(response).to.have.status(400);
     })
 
-    it('retorna um objeto', () => {
+    it('Will be checked if the body is an object', () => {
       expect(response.body).to.be.an('object');
     });
 
-    it('o objeto possui a propriedade "message"', () => {
+    it('Will be checked if the body contains the property "message"', () => {
       expect(response.body).to.have.property('message');
     });
 
-    it('a propriedade "message" deve possuir o texto "Invalid entries. Try again."',() => {
+    it('Will be checked if the "message" property contains the text "Invalid entries. Please try again."',() => {
       expect(response.body.message).to.be.equal('Invalid entries. Try again.');
     });
     
   });
-  describe('1.2 - Email invalido', () => {
+
+  describe('1.2 - Validate error messages if the email has already been registered', () => {
     const DBServer = new MongoMemoryServer();
     let response;
 
     before(async() => {
-      const URLMock = await DBServer.getUri();
-      const connectionMock = await MongoClient.connect(URLMock,
-        { useNewUrlParser: true, useUnifiedTopology: true });
-      sinon.stub(MongoClient, 'connect').resolves(connectionMock);
+      const connectionMock = await mockDBMemory(DBServer);
         await connectionMock.db('Cookmaster').collection('users').insertOne(usuárioValido);
 
       response = await chai.request(server).post('/users/').send(usuárioInvalido);
@@ -66,33 +65,29 @@ describe('1 - POST /users/', () => {
       await DBServer.stop();
     });
 
-    it('Retorna o status 409', () => {
+    it('Will be checked if it returns a 409 status code.', () => {
       expect(response).to.have.status(409)
     });
 
-    it('retorna um objeto', () => {
+    it('Will be checked if the body is an object', () => {
       expect(response.body).to.be.an('object');
     });
 
-    it('o objeto possui a propriedade "message"', () => {
+    it('Will be checked if the body contains the property "message"', () => {
       expect(response.body).to.have.property('message');
     });
 
-    it('a propriedade "message" deve possuir o texto "Email already registered"',() => {
+    it('Will be checked if the "message" property contains the text "Email already registered"',() => {
       expect(response.body.message).to.be.equal('Email already registered');
     });
   });
   
-  describe('1.3 - Sucesso Registro', () => {
+  describe('1.3 - Validating when registering a user successfully', () => {
     const DBServer = new MongoMemoryServer();
     let response;
 
     before(async() => {
-      const URLMock = await DBServer.getUri();
-      const connectionMock = await MongoClient.connect(URLMock,
-        { useNewUrlParser: true, useUnifiedTopology: true });
-      sinon.stub(MongoClient, 'connect').resolves(connectionMock);
-
+      await mockDBMemory(DBServer);
       response = await chai.request(server).post('/users/').send(usuárioValido);
     });
 
@@ -101,19 +96,19 @@ describe('1 - POST /users/', () => {
       await DBServer.stop();
     });
 
-    it('retorna status 201', () => {
+    it('Will be checked if it returns a 201 status code.', () => {
       expect(response).to.have.status(201);
     });
 
-    it('retorna um objeto', () => {
+    it('Will be checked if the body is an object', () => {
       expect(response.body).to.be.an('object');
     });
 
-    it('contem a propriedade user', () => {
+    it('Will be checked if the body contains the property "user"', () => {
       expect(response.body).to.have.a.property('user');
     });
 
-    it(' o user deve conter as seguintes propriedades, name, email, role, e id', () => {
+    it('The body of the "user" must contain the user properties', () => {
       expect(response.body.user).to.have.a.property('_id');
       expect(response.body.user).to.have.a.property('role').equal('user');
       expect(response.body.user).to.have.a.property('name').equal(usuárioValido.name);
