@@ -42,7 +42,7 @@ describe('1 - Validating endpoint "POST" from path "/users/"', () => {
       expect(response.body).to.have.property('message');
     });
 
-    it('Will be checked if the "message" property contains the text "Invalid entries. Please try again."',() => {
+    it('Will be checked if the "message" property contains the text "Invalid entries. Try again."',() => {
       expect(response.body.message).to.be.equal('Invalid entries. Try again.');
     });
     
